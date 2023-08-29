@@ -4,7 +4,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_event.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_state.dart';
+import 'package:flutter_bloc_api/data/api/api_response.dart';
 import 'package:flutter_bloc_api/ui/screenshot_view.dart';
+import 'package:flutter_bloc_api/utils/utils.dart';
 import '../../data/model/response/app_details_response.dart';
 import '../theme/theme.dart';
 
@@ -30,23 +32,37 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
     return Scaffold(
       appBar: AppBar(title: Text(widget.title ?? "", style: headerTextStyle)),
       body: SafeArea(
-        child: BlocBuilder(
-          bloc: context.read<HomeDetailBloc>(),
-          builder: (context, state) {
-            switch (state.runtimeType) {
-              case HomeDetaiLoadingState:
-                return const Center(child: CircularProgressIndicator());
-              case HomeDetaiSuccessState:
-                final successState = state as HomeDetaiSuccessState;
-                return _apppDetailsBody(
-                    successState.appDetailsResponse.results![0]);
-              case HomeDetaiErrorState:
-                return const Text('Error');
-              default:
-                return const SizedBox();
-            }
-          },
-        ),
+        child: BlocConsumer(
+            bloc: context.read<HomeDetailBloc>(),
+            builder: (context, state) {
+              switch (state.runtimeType) {
+                case HomeDetaiLoadingState:
+                  return const Center(child: CircularProgressIndicator());
+                case HomeDetaiSuccessState:
+                  final successState = state as HomeDetaiSuccessState;
+                  if (successState.appDetailsResponse?.results != null &&
+                      successState.appDetailsResponse!.results!.isNotEmpty) {
+                    return _apppDetailsBody(
+                        successState.appDetailsResponse!.results![0]);
+                  } else {
+                    return const Center(child: Text("No data"));
+                  }
+
+                default:
+                  return const SizedBox();
+              }
+            },
+            listener: (BuildContext context, HomeDetailsState? state) {
+              if (state is HomeDetaiErrorState) {
+                if (state.apiResponseEnum ==
+                    ApiResponseEnum.noInternetConnection) {
+                  Utils.showSnackBar(message: state.errorMessage);
+                } else if (state.apiResponseEnum ==
+                    ApiResponseEnum.apiServerError) {
+                  Utils.showSnackBar(message: state.errorMessage);
+                }
+              }
+            }),
       ),
     );
   }

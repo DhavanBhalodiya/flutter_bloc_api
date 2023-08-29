@@ -1,23 +1,31 @@
+import 'dart:io';
+import 'package:flutter_bloc_api/data/api/api_response.dart';
 import 'package:http/http.dart' as http;
 import 'api.dart';
 
 class ApiService {
-  //api requets for GET
-  static Future<dynamic>? getApiRequest(
-      {String baseUrl = ApiConstants.baseUrl,
-      String? apiEndPoint = "",
-      Function? responseParser}) async {
+  
+  static Future<ApiResponse<T>> getApiHelper<T>({String baseUrl = ApiConstants.baseUrl,String? apiEndPoint,Function? responseParser}) async {
+  try {
     final response = await http.get(Uri.parse(baseUrl + apiEndPoint!));
-
-    debugPrint("Base URL ${baseUrl + apiEndPoint}");
-
-    if (response.statusCode == 200) {
+     debugPrint("Base URL ${baseUrl + apiEndPoint}");
+      debugPrint("Response ${response.body}");
+   
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       if (responseParser != null) {
-        return responseParser(jsonDecode(response.body));
+        return Success(responseParser(jsonDecode(response.body)));
+      } else {
+        return ServerError("Error");
       }
-      return jsonDecode(response.body);
     } else {
-      throw Exception("Failed to load data");
+      return ServerError("Error");
+    }
+  } catch (exception) {
+    if (exception is SocketException) {
+      return NoInternetConnection("No Internet Connection");
+    } else {
+      return ServerError("Unexpected internal server error.");
     }
   }
+}
 }
