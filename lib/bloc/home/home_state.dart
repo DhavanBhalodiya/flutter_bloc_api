@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc_api/data/api/api_response.dart';
 import 'package:flutter_bloc_api/data/model/response/apps_list_response.dart';
 
 @immutable
@@ -11,4 +12,8 @@ class HomeSuccessState extends HomeState{
   final List<Results>? results;
   HomeSuccessState(this.results);
 }
-class HomeErrorState extends HomeState{}
+class HomeErrorState extends HomeState{
+  final ApiResponseEnum? responseEnum;
+  final String? errorMessage;
+  HomeErrorState({this.responseEnum,this.errorMessage});
+}

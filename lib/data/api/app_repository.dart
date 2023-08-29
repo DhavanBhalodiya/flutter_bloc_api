@@ -1,8 +1,9 @@
+import 'package:flutter_bloc_api/data/api/api_response.dart';
 import '../model/model.dart';
 
 
 abstract class AppRepository {
-  Future<AppListResponse>? getTopFreeApps();
+  Future<ApiResponse<AppListResponse>>? getTopFreeApps();
 
-  Future<AppDetailsResponse>? getAppDetails(String appId);
+  Future<ApiResponse<AppDetailsResponse>>? getAppDetails(String appId);
 }
