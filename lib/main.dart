@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_api/bloc/home/home_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_bloc.dart';
 import 'package:flutter_bloc_api/di/servicelocator.dart';
-import 'package:flutter_bloc_api/ui/home.dart';
+import 'package:flutter_bloc_api/ui/screens/home.dart';
 
 void main() {
   getItsetUp();
@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
         navigatorKey: getNavigation.globalKey,
         title: 'Flutter Bloc Demo',
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
           useMaterial3: true,
         ),
         debugShowCheckedModeBanner: false,
