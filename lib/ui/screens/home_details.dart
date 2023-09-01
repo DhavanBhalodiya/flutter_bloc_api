@@ -5,10 +5,12 @@ import 'package:flutter_bloc_api/bloc/homeDetails/home_details_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_event.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_state.dart';
 import 'package:flutter_bloc_api/data/api/api_response.dart';
-import 'package:flutter_bloc_api/ui/screenshot_view.dart';
+import 'package:flutter_bloc_api/ui/screens/screenshot_view.dart';
+import 'package:flutter_bloc_api/ui/widgets/no_internet_widget.dart';
 import 'package:flutter_bloc_api/utils/utils.dart';
-import '../../data/model/response/app_details_response.dart';
-import '../theme/theme.dart';
+import '../../../data/model/response/app_details_response.dart';
+import '../../theme/theme.dart';
+import '../../utils/colors.dart';
 
 class HomeDetailsPage extends StatefulWidget {
   final String? title;
@@ -30,7 +32,11 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.title ?? "", style: headerTextStyle)),
+      backgroundColor: AppColor.bgColor,
+      appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: Text(widget.title ?? "", style: headerTextStyle),
+          backgroundColor: AppColor.bgColor),
       body: SafeArea(
         child: BlocConsumer(
             bloc: context.read<HomeDetailBloc>(),
@@ -38,6 +44,7 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
               switch (state.runtimeType) {
                 case HomeDetaiLoadingState:
                   return const Center(child: CircularProgressIndicator());
+
                 case HomeDetaiSuccessState:
                   final successState = state as HomeDetaiSuccessState;
                   if (successState.appDetailsResponse?.results != null &&
@@ -47,6 +54,19 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
                   } else {
                     return const Center(child: Text("No data"));
                   }
+                case HomeDetaiErrorState:
+                  final errorState = state as HomeDetaiErrorState;
+                  if (errorState.apiResponseEnum ==
+                      ApiResponseEnum.noInternetConnection) {
+                    return noInternetWidget(
+                      () {
+                        context
+                            .read<HomeDetailBloc>()
+                            .add(HomeDetailInitialEvent(widget.id));
+                      },
+                    );
+                  }
+                  return const SizedBox();
 
                 default:
                   return const SizedBox();
@@ -54,11 +74,7 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
             },
             listener: (BuildContext context, HomeDetailsState? state) {
               if (state is HomeDetaiErrorState) {
-                if (state.apiResponseEnum ==
-                    ApiResponseEnum.noInternetConnection) {
-                  Utils.showSnackBar(message: state.errorMessage);
-                } else if (state.apiResponseEnum ==
-                    ApiResponseEnum.apiServerError) {
+                if (state.apiResponseEnum == ApiResponseEnum.apiServerError) {
                   Utils.showSnackBar(message: state.errorMessage);
                 }
               }

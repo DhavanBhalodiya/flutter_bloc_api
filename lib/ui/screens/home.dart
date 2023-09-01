@@ -6,9 +6,10 @@ import 'package:flutter_bloc_api/bloc/home/home_event.dart';
 import 'package:flutter_bloc_api/bloc/home/home_state.dart';
 import 'package:flutter_bloc_api/data/api/api_response.dart';
 import 'package:flutter_bloc_api/data/model/response/apps_list_response.dart';
-import 'package:flutter_bloc_api/ui/home_details.dart';
+import 'package:flutter_bloc_api/ui/screens/home_details.dart';
+import 'package:flutter_bloc_api/ui/widgets/no_internet_widget.dart';
 import 'package:flutter_bloc_api/utils/colors.dart';
-import '../theme/theme.dart';
+import '../../theme/theme.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -27,8 +28,11 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.borderColor,
-      appBar: AppBar(title: Text("App Listing", style: headerTextStyle)),
+      backgroundColor: AppColor.bgColor,
+      appBar: AppBar(
+        title: Text("App Listing", style: headerTextStyle),
+        backgroundColor: AppColor.bgColor,
+      ),
       body: SafeArea(
           child: BlocBuilder(
         builder: (BuildContext context, state) {
@@ -39,8 +43,10 @@ class _MyHomePageState extends State<MyHomePage> {
           } else if (state is HomeErrorState) {
             switch (state.responseEnum) {
               case ApiResponseEnum.noInternetConnection:
-                return Text(state.errorMessage ?? "");
-                case ApiResponseEnum.apiServerError:
+                return noInternetWidget(() {
+                  context.read<HomeBloc>().add(HomeInitialEvent());
+                });
+              case ApiResponseEnum.apiServerError:
                 return const Text("Server Error");
               default:
                 return const Text("Error");
@@ -73,7 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _listItem(Results? results, int index) {
     return Card(
-      color: Colors.white,
+      color: AppColor.cardColor,
       child: Padding(
         padding: const EdgeInsets.only(bottom: 12, left: 8, right: 8),
         child: Row(
