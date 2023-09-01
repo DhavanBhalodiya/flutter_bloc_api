@@ -2,15 +2,6 @@
 
 A new Flutter project.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Overview
+The goal of this library is to make it easy to separate presentation from business logic, facilitating reusability.
+![cubit_architecture_full](https://github.com/DhavanBhalodiya/flutter_bloc_api/assets/128218192/ace2549c-709e-4812-8465-41df314f99b8)
