@@ -1,6 +1,5 @@
-# flutter_bloc_api
+# Flutter Bloc Api Architecture
 
-A new Flutter project.
 
 # Overview
 The goal of this library is to make it easy to separate presentation from business logic, facilitating reusability.
