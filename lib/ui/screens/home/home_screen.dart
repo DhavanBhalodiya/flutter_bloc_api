@@ -9,6 +9,7 @@ import 'package:flutter_bloc_api/ui/screens/home/home_list_item_widget.dart';
 import 'package:flutter_bloc_api/ui/screens/homeDetails/home_details_screen.dart';
 import 'package:flutter_bloc_api/ui/widgets/no_internet_widget.dart';
 import 'package:flutter_bloc_api/utils/colors.dart';
+import 'package:flutter_bloc_api/utils/constant.dart';
 import 'package:flutter_bloc_api/utils/extentions.dart';
 import '../../../theme/theme.dart';
 
@@ -28,36 +29,46 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.bgColor,
-      appBar: AppBar(
-        title: Text("App Listing", style: headerTextStyle),
-        backgroundColor: AppColor.bgColor,
-      ),
-      body: SafeArea(
-          child: BlocBuilder(
-        builder: (BuildContext context, state) {
-          if (state is HomeLoadingState) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is HomeSuccessState) {
-            return _homeBody(state.results);
-          } else if (state is HomeErrorState) {
-            switch (state.responseEnum) {
-              case ApiResponseEnum.noInternetConnection:
-                return noInternetWidget(() {
-                  context.read<HomeBloc>().add(HomeInitialEvent());
-                });
-              case ApiResponseEnum.apiServerError:
-                return const Text("Server Error");
-              default:
-                return const Text("Error");
-            }
-          } else {
-            return const SizedBox();
-          }
-        },
-        bloc: context.watch<HomeBloc>(),
-      )),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Scaffold(
+            backgroundColor: AppColor.bgColor,
+            appBar: AppBar(
+              title: Text("App Listing", style: headerTextStyle),
+              backgroundColor: AppColor.bgColor,
+            ),
+            body: SafeArea(
+                child: BlocBuilder(
+              builder: (BuildContext context, state) {
+                if (state is HomeLoadingState) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (state is HomeSuccessState) {
+                  return _homeBody(state.results);
+                } else if (state is HomeErrorState) {
+                  switch (state.responseEnum) {
+                    case ApiResponseEnum.noInternetConnection:
+                      return noInternetWidget(() {
+                        context.read<HomeBloc>().add(HomeInitialEvent());
+                      });
+                    case ApiResponseEnum.apiServerError:
+                      return const Text("Server Error");
+                    default:
+                      return const Text("Error");
+                  }
+                } else {
+                  return const SizedBox();
+                }
+              },
+              bloc: context.watch<HomeBloc>(),
+            )),
+            bottomNavigationBar: constraints.isMobile
+                ? NavigationBar(
+                    elevation: 0,
+                    backgroundColor: AppColor.whiteColor,
+                    destinations: destinations,
+                  )
+                : null);
+      },
     );
   }
 
