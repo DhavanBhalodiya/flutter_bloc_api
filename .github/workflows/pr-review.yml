@@ -18,7 +18,7 @@ jobs:
           pr-number: ${{ github.event.pull_request.number }}
           llm-provider: compatible
           llm-base-url: https://openrouter.ai/api/v1
-          llm-model: anthropic/claude-opus-5-fast
+          llm-model: openai/gpt-5.6-sol
           llm-api-key: ${{ secrets.OPENROUTER_API_KEY }}
           #anthropic-api-key: ${{ secrets.ANTHROPIC_API_KEY }}
           # llm-model: claude-opus-4-8          # optional override
