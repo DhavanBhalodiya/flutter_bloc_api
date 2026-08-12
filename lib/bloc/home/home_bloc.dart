@@ -16,7 +16,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
     var response = await getAppRepository.getTopFreeApps();
 
-    switch (response?.responseEnum) {
+    switch (response!.responseEnum) {
       case ApiResponseEnum.apiSuccess:
         emit(HomeSuccessState(response?.data?.feed?.results));
         break;
