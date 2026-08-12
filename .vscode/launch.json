@@ -7,7 +7,10 @@
         {
             "name": "flutter_bloc_api",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+                "args": [
+                    "--web-browser-flag=--disable-web-security"
+                ]
         },
         {
             "name": "flutter_bloc_api (profile mode)",

@@ -1,5 +1,5 @@
 class AppListResponse {
-  Feed? feed;
+  Feed feed;
 
   AppListResponse({this.feed});
 

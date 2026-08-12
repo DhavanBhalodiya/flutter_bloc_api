@@ -5,12 +5,13 @@ import 'package:flutter_bloc_api/bloc/homeDetails/home_details_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_event.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_state.dart';
 import 'package:flutter_bloc_api/data/api/api_response.dart';
-import 'package:flutter_bloc_api/ui/screens/screenshot_view.dart';
+import 'package:flutter_bloc_api/ui/screens/homeDetails/screenshot_listing_widget.dart';
 import 'package:flutter_bloc_api/ui/widgets/no_internet_widget.dart';
+import 'package:flutter_bloc_api/utils/extentions.dart';
 import 'package:flutter_bloc_api/utils/utils.dart';
-import '../../../data/model/response/app_details_response.dart';
-import '../../theme/theme.dart';
-import '../../utils/colors.dart';
+import '../../../../data/model/response/app_details_response.dart';
+import '../../../theme/theme.dart';
+import '../../../utils/colors.dart';
 
 class HomeDetailsPage extends StatefulWidget {
   final String? title;
@@ -23,10 +24,17 @@ class HomeDetailsPage extends StatefulWidget {
 }
 
 class _HomeDetailsPageState extends State<HomeDetailsPage> {
+  final _scrollerControler = ScrollController();
   @override
   void initState() {
     super.initState();
     context.read<HomeDetailBloc>().add(HomeDetailInitialEvent(widget.id));
+  }
+
+  @override
+  void dispose() {
+    _scrollerControler.dispose();
+    super.dispose();
   }
 
   @override
@@ -85,22 +93,58 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
 
   Widget _apppDetailsBody(AppDetailsResults results) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _topView(results),
-            const SizedBox(height: 20),
-            _screenShotListing(results.screenshotUrls, context),
-            const SizedBox(height: 20),
-            Text("Description",
-                style: textStyle.copyWith(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            Text(results.description ?? "",
-                style: textStyle.copyWith(fontSize: 14))
-          ],
-        ),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          if (constraints.isMobile) {
+            return _mobileBody(results);
+          } else if (constraints.isDesktop) {
+            return _deskTopBody(results);
+          } else {
+            return _deskTopBody(results);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _mobileBody(AppDetailsResults results) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _topView(results),
+          const SizedBox(height: 20),
+          screenShotListing(
+              results.screenshotUrls, context, _scrollerControler),
+          const SizedBox(height: 20),
+          Text("Description",
+              style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Text(results.description ?? "",
+              style: textStyle.copyWith(fontSize: 14))
+        ],
+      ),
+    );
+  }
+
+  Widget _deskTopBody(AppDetailsResults results) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16, bottom: 16, left: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _topView(results),
+          const SizedBox(height: 20),
+          screenShotListingWeb(
+              results.screenshotUrls, context, _scrollerControler),
+          const SizedBox(height: 20),
+          Text("Description",
+              style: textStyle.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Text(results.description ?? "",
+              style: textStyle.copyWith(fontSize: 14))
+        ],
       ),
     );
   }
@@ -182,40 +226,6 @@ class _HomeDetailsPageState extends State<HomeDetailsPage> {
           ),
         )
       ],
-    );
-  }
-
-  Widget _screenShotListing(
-      List<String>? screenshotUrls, BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.width * 0.8,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) {
-          return GestureDetector(
-              onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => AppSSPagerView(screenshotUrls))),
-              child: _screenShorItem(screenshotUrls![index], context));
-        },
-        itemCount: screenshotUrls?.length ?? 0,
-        shrinkWrap: true,
-        separatorBuilder: (BuildContext context, int index) {
-          return const SizedBox(width: 10);
-        },
-      ),
-    );
-  }
-
-  Widget _screenShorItem(String? url, BuildContext context) {
-    return CachedNetworkImage(
-      //placeholder: (context, url) => const CircularProgressIndicator(),
-      errorWidget: (context, url, error) => const Icon(Icons.error),
-      imageUrl: url ?? "",
-      fit: BoxFit.cover,
-      width: MediaQuery.of(context).size.width / 2,
     );
   }
 }

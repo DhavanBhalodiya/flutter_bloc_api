@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_bloc_api/bloc/home/home_bloc.dart';
 import 'package:flutter_bloc_api/bloc/homeDetails/home_details_bloc.dart';
 import 'package:flutter_bloc_api/di/servicelocator.dart';
-import 'package:flutter_bloc_api/ui/screens/home.dart';
+import 'package:flutter_bloc_api/ui/screens/home/home_screen.dart';
 
 void main() {
   getItsetUp();
